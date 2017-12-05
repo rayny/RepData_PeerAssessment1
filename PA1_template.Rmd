@@ -7,16 +7,52 @@ output:
 
 
 ## Loading and preprocessing the data
+The data is loaded from unzipped .csv file 
+```{r}
+activity <- read.csv("activity.csv", head = TRUE)
 
+```
 
 
 ## What is mean total number of steps taken per day?
+Summarizing steps by each day
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+steps.n <- activity %>% group_by(date) %>% summarise(steps = sum(steps))
+```
 
+Histogram of the steps amount per day
+```{r warning=FALSE}
+ggplot(steps.n, aes(steps))+geom_histogram(bins = 10)
+```
 
+Mean value of steps per day
+```{r}
+mean(steps.n$steps, na.rm=TRUE)
+```
+
+Median value of steps per day
+```{r}
+median(steps.n$steps, na.rm=TRUE)
+```
 
 ## What is the average daily activity pattern?
 
+Summarizing steps per interval
+```{r}
+steps.interval <- activity %>% group_by(interval) %>% summarize(steps = mean(steps, na.rm = TRUE))
+```
 
+Time series plot, showing average number of steps taken per 5-minute interval, averaged across all days
+```{r}
+plot(x=steps.interval$interval, y=steps.interval$steps, type = "l", main = "Average number of steps taken", xlab = "Interval Number", ylab = "Number of Steps")
+```
+
+Interval, containing maximum number of steps (on average across the days)
+```{r}
+steps.interval[which.max(steps.interval$steps),]$interval
+```
 
 ## Imputing missing values
 
